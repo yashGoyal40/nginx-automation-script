@@ -49,6 +49,11 @@ fi
 # Navigate to the project directory
 cd "$PROJECT_DIR"
 
+# Create the directory for sites-available if it doesn't exist
+if [ ! -d "/etc/nginx/sites-available" ]; then
+    sudo mkdir /etc/nginx/sites-available
+fi
+
 # Check application type and set up accordingly
 if [ "$APP_TYPE" -eq 1 ]; then
     # HTML/CSS/JS app
@@ -56,7 +61,6 @@ if [ "$APP_TYPE" -eq 1 ]; then
     # No additional setup required for plain HTML/CSS/JS
 
     # Set permissions
-    echo "WARNING: For simplicity, using 'root' instead of 'www-data' for ownership."
     sudo chown -R root:root "$PROJECT_DIR"
     sudo chmod -R 755 "$PROJECT_DIR"
 
@@ -82,7 +86,6 @@ elif [ "$APP_TYPE" -eq 2 ]; then
     npm run build
 
     # Set permissions for the build folder
-    echo "WARNING: Using 'root' instead of 'www-data' for ownership."
     sudo chown -R root:root "$PROJECT_DIR/dist"
     sudo chmod -R 755 "$PROJECT_DIR/dist"
 
@@ -111,7 +114,6 @@ elif [ "$APP_TYPE" -eq 3 ]; then
     ng build --prod
 
     # Set permissions for the dist folder
-    echo "WARNING: Using 'root' instead of 'www-data' for ownership."
     sudo chown -R root:root "$PROJECT_DIR/dist"
     sudo chmod -R 755 "$PROJECT_DIR/dist"
 
@@ -140,7 +142,6 @@ elif [ "$APP_TYPE" -eq 4 ]; then
     npm run build
 
     # Set permissions for the dist folder
-    echo "WARNING: Using 'root' for ownership."
     sudo chown -R root:root "$PROJECT_DIR/dist"
     sudo chmod -R 755 "$PROJECT_DIR/dist"
 
@@ -160,13 +161,10 @@ else
     exit 1
 fi
 
-# Ensure Nginx directory exists before creating symbolic link
-if [ ! -d "/etc/nginx/sites-enabled" ]; then
-    sudo mkdir -p /etc/nginx/sites-enabled
-fi
-
-# Enable the site and test Nginx configuration
+# Create the symbolic link for sites-enabled
 sudo ln -s "$NGINX_CONF" /etc/nginx/sites-enabled/
+
+# Test Nginx configuration
 sudo nginx -t
 
 # Restart Nginx to apply changes
