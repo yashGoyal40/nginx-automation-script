@@ -56,7 +56,8 @@ if [ "$APP_TYPE" -eq 1 ]; then
     # No additional setup required for plain HTML/CSS/JS
 
     # Set permissions
-    sudo chown -R www-data:www-data "$PROJECT_DIR"
+    echo "WARNING: For simplicity, using 'root' instead of 'www-data' for ownership."
+    sudo chown -R root:root "$PROJECT_DIR"
     sudo chmod -R 755 "$PROJECT_DIR"
 
     # Create Nginx configuration for HTML/CSS/JS
@@ -81,7 +82,8 @@ elif [ "$APP_TYPE" -eq 2 ]; then
     npm run build
 
     # Set permissions for the build folder
-    sudo chown -R www-data:www-data "$PROJECT_DIR/dist"
+    echo "WARNING: Using 'root' instead of 'www-data' for ownership."
+    sudo chown -R root:root "$PROJECT_DIR/dist"
     sudo chmod -R 755 "$PROJECT_DIR/dist"
 
     # Create Nginx configuration for React
@@ -109,7 +111,8 @@ elif [ "$APP_TYPE" -eq 3 ]; then
     ng build --prod
 
     # Set permissions for the dist folder
-    sudo chown -R www-data:www-data "$PROJECT_DIR/dist"
+    echo "WARNING: Using 'root' instead of 'www-data' for ownership."
+    sudo chown -R root:root "$PROJECT_DIR/dist"
     sudo chmod -R 755 "$PROJECT_DIR/dist"
 
     # Create Nginx configuration for Angular
@@ -137,7 +140,8 @@ elif [ "$APP_TYPE" -eq 4 ]; then
     npm run build
 
     # Set permissions for the dist folder
-    sudo chown -R www-data:www-data "$PROJECT_DIR/dist"
+    echo "WARNING: Using 'root' instead of 'www-data' for ownership."
+    sudo chown -R root:root "$PROJECT_DIR/dist"
     sudo chmod -R 755 "$PROJECT_DIR/dist"
 
     # Create Nginx configuration for Vue
@@ -154,6 +158,11 @@ elif [ "$APP_TYPE" -eq 4 ]; then
 else
     echo "Invalid selection. Exiting."
     exit 1
+fi
+
+# Ensure Nginx directory exists before creating symbolic link
+if [ ! -d "/etc/nginx/sites-enabled" ]; then
+    sudo mkdir -p /etc/nginx/sites-enabled
 fi
 
 # Enable the site and test Nginx configuration
