@@ -38,13 +38,13 @@ Follow these steps to use the deployment script:
 3. **Make the Script Executable**:
    Once the script is downloaded, make it executable by running:
    ```bash
-    sudo chmod +x script.sh
+   sudo chmod +x script.sh
 
 4. **Run the Script**:
    Execute the script with the following command:
 
    ```bash
-   ./script.sh
+    ./script.sh
 
 ## Script Prompts
 - **The script will prompt you for the following inputs:**:
