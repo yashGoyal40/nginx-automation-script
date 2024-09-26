@@ -166,7 +166,9 @@ else
 fi
 
 # Create the symbolic link for sites-enabled
-sudo ln -s "$NGINX_CONF" /etc/nginx/sites-enabled/
+if [ ! -L "/etc/nginx/sites-enabled/project" ]; then
+    sudo ln -s "$NGINX_CONF" /etc/nginx/sites-enabled/
+fi
 
 # Test Nginx configuration
 sudo nginx -t
