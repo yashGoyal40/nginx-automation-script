@@ -140,7 +140,7 @@ elif [ "$APP_TYPE" -eq 4 ]; then
     npm run build
 
     # Set permissions for the dist folder
-    echo "WARNING: Using 'root' instead of 'www-data' for ownership."
+    echo "WARNING: Using 'root' for ownership."
     sudo chown -R root:root "$PROJECT_DIR/dist"
     sudo chmod -R 755 "$PROJECT_DIR/dist"
 
