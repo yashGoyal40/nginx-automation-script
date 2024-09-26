@@ -54,6 +54,10 @@ if [ ! -d "/etc/nginx/sites-available" ]; then
     sudo mkdir /etc/nginx/sites-available
 fi
 
+if [ ! -d "/etc/nginx/sites-enabled" ]; then
+    sudo mkdir /etc/nginx/sites-enabled
+fi
+
 # Check application type and set up accordingly
 if [ "$APP_TYPE" -eq 1 ]; then
     # HTML/CSS/JS app
