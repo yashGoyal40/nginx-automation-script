@@ -23,18 +23,24 @@ This repository contains an automation script to deploy web applications using N
 
 Follow these steps to use the deployment script:
 
-1. **Clone the Repository**:
+1. **Switch to Root User**
+    you will need root permissions to do the configurations
+
+   ```bash
+       sudo su
+
+2. **Clone the Repository**:
    You can download the script using `curl`. Run the following command in your terminal:
 
    ```bash
    curl -O https://raw.githubusercontent.com/yashGoyal40/nginx-automation-script/refs/heads/main/script.sh
 
-2. **Make the Script Executable**:
+3. **Make the Script Executable**:
    Once the script is downloaded, make it executable by running:
    ```bash
     sudo chmod +x script.sh
 
-3. **Run the Script**:
+4. **Run the Script**:
    Execute the script with the following command:
 
    ```bash
