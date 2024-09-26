@@ -81,15 +81,15 @@ elif [ "$APP_TYPE" -eq 2 ]; then
     npm run build
 
     # Set permissions for the build folder
-    sudo chown -R www-data:www-data "$PROJECT_DIR/build"
-    sudo chmod -R 755 "$PROJECT_DIR/build"
+    sudo chown -R www-data:www-data "$PROJECT_DIR/dist"
+    sudo chmod -R 755 "$PROJECT_DIR/dist"
 
     # Create Nginx configuration for React
     echo "server {
         listen 80;
 
         location / {
-            root $PROJECT_DIR/build;
+            root $PROJECT_DIR/dist;
             index index.html;
             try_files \$uri \$uri/ /index.html;
         }
