@@ -27,7 +27,7 @@ else
 fi
 
 # Variables
-PROJECT_DIR="/var/www/html/project"  # Directory to clone the project
+PROJECT_DIR="/usr/share/nginx/html/project"  # Directory to clone the project
 NGINX_CONF="/etc/nginx/sites-available/project"  # Nginx configuration file
 
 # Update packages
