@@ -27,7 +27,7 @@ Follow these steps to use the deployment script:
     you will need root permissions to do the configurations
 
    ```bash
-       sudo su
+   sudo su
 
 2. **Clone the Repository**:
    You can download the script using `curl`. Run the following command in your terminal:
