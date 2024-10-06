@@ -64,7 +64,7 @@ You can use the script as follows:
 ```bash
     curl -O https://raw.githubusercontent.com/yashGoyal40/nginx-automation-script/refs/heads/main/script.sh
     sudo chmod +x script.sh
-    ./script.sh
+    ./script.sh <git repo URL> <app_type> <os_type>
 ```
 ## Contributing
 Contributions are welcome! If you have suggestions for improvements or encounter issues, feel free to open an issue or submit a pull request
