@@ -1,21 +1,34 @@
 #!/bin/bash
 
-# Prompt the user for the GitHub repository URL
-read -p "Enter your GitHub repository URL: " GITHUB_REPO
+# Function to prompt for inputs interactively
+function prompt_for_inputs {
+    # Prompt the user for the GitHub repository URL
+    read -p "Enter your GitHub repository URL: " GITHUB_REPO
 
-# Prompt the user for the type of application
-echo "Select the type of application:"
-echo "1) HTML/CSS/JS"
-echo "2) React"
-echo "3) Angular"
-echo "4) Vue"
-read -p "Enter your choice (1-4): " APP_TYPE
+    # Prompt the user for the type of application
+    echo "Select the type of application:"
+    echo "1) HTML/CSS/JS"
+    echo "2) React"
+    echo "3) Angular"
+    echo "4) Vue"
+    read -p "Enter your choice (1-4): " APP_TYPE
 
-# Prompt the user for the operating system type
-echo "Select your operating system type:"
-echo "1) Debian/Ubuntu"
-echo "2) RHEL/CentOS"
-read -p "Enter your choice (1-2): " OS_TYPE
+    # Prompt the user for the operating system type
+    echo "Select your operating system type:"
+    echo "1) Debian/Ubuntu"
+    echo "2) RHEL/CentOS"
+    read -p "Enter your choice (1-2): " OS_TYPE
+}
+
+# Check if the correct number of arguments is provided
+if [ "$#" -eq 3 ]; then
+    GITHUB_REPO="$1"
+    APP_TYPE="$2"
+    OS_TYPE="$3"
+else
+    # If no arguments, prompt for inputs
+    prompt_for_inputs
+fi
 
 # Set package manager based on OS type
 if [ "$OS_TYPE" -eq 1 ]; then
@@ -51,119 +64,125 @@ cd "$PROJECT_DIR"
 
 # Create the directory for sites-available if it doesn't exist
 if [ ! -d "/etc/nginx/sites-available" ]; then
-    sudo mkdir /etc/nginx/sites-available
+    sudo mkdir -p /etc/nginx/sites-available
 fi
 
 if [ ! -d "/etc/nginx/sites-enabled" ]; then
-    sudo mkdir /etc/nginx/sites-enabled
+    sudo mkdir -p /etc/nginx/sites-enabled
 fi
 
 # Check application type and set up accordingly
-if [ "$APP_TYPE" -eq 1 ]; then
-    # HTML/CSS/JS app
-    echo "Setting up HTML/CSS/JS app..."
-    # No additional setup required for plain HTML/CSS/JS
+case "$APP_TYPE" in
+    1)
+        # HTML/CSS/JS app
+        echo "Setting up HTML/CSS/JS app..."
+        # No additional setup required for plain HTML/CSS/JS
 
-    # Set permissions
-    sudo chown -R root:root "$PROJECT_DIR"
-    sudo chmod -R 755 "$PROJECT_DIR"
+        # Set permissions
+        sudo chown -R root:root "$PROJECT_DIR"
+        sudo chmod -R 755 "$PROJECT_DIR"
 
-    # Create Nginx configuration for HTML/CSS/JS
-    echo "server {
-        listen 80;
+        # Create Nginx configuration for HTML/CSS/JS
+        echo "server {
+            listen 80;
 
-        location / {
-            root $PROJECT_DIR;
-            index index.html index.htm;
-            try_files \$uri \$uri/ /index.html;
-        }
-    }" | sudo tee "$NGINX_CONF"
+            location / {
+                root $PROJECT_DIR;
+                index index.html index.htm;
+                try_files \$uri \$uri/ /index.html;
+            }
+        }" | sudo tee "$NGINX_CONF"
+        ;;
+    
+    2)
+        # React app
+        echo "Setting up React app..."
+        # Install Node.js and npm
+        sudo $INSTALL_COMMAND nodejs npm
 
-elif [ "$APP_TYPE" -eq 2 ]; then
-    # React app
-    echo "Setting up React app..."
-    # Install Node.js and npm
-    sudo $INSTALL_COMMAND nodejs npm
+        # Install dependencies and build the React app
+        npm install
+        npm run build
 
-    # Install dependencies and build the React app
-    npm install
-    npm run build
+        # Set permissions for the build folder
+        sudo chown -R root:root "$PROJECT_DIR/dist"
+        sudo chmod -R 755 "$PROJECT_DIR/dist"
 
-    # Set permissions for the build folder
-    sudo chown -R root:root "$PROJECT_DIR/dist"
-    sudo chmod -R 755 "$PROJECT_DIR/dist"
+        # Create Nginx configuration for React
+        echo "server {
+            listen 80;
 
-    # Create Nginx configuration for React
-    echo "server {
-        listen 80;
+            location / {
+                root $PROJECT_DIR/dist;
+                index index.html;
+                try_files \$uri \$uri/ /index.html;
+            }
+        }" | sudo tee "$NGINX_CONF"
+        ;;
+    
+    3)
+        # Angular app
+        echo "Setting up Angular app..."
+        # Install Node.js and npm
+        sudo $INSTALL_COMMAND nodejs npm
 
-        location / {
-            root $PROJECT_DIR/dist;
-            index index.html;
-            try_files \$uri \$uri/ /index.html;
-        }
-    }" | sudo tee "$NGINX_CONF"
+        # Install Angular CLI
+        sudo npm install -g @angular/cli
 
-elif [ "$APP_TYPE" -eq 3 ]; then
-    # Angular app
-    echo "Setting up Angular app..."
-    # Install Node.js and npm
-    sudo $INSTALL_COMMAND nodejs npm
+        # Install dependencies and build the Angular app
+        npm install
+        ng build --prod
 
-    # Install Angular CLI
-    sudo npm install -g @angular/cli
+        # Set permissions for the dist folder
+        sudo chown -R root:root "$PROJECT_DIR/dist"
+        sudo chmod -R 755 "$PROJECT_DIR/dist"
 
-    # Install dependencies and build the Angular app
-    npm install
-    ng build --prod
+        # Create Nginx configuration for Angular
+        echo "server {
+            listen 80;
 
-    # Set permissions for the dist folder
-    sudo chown -R root:root "$PROJECT_DIR/dist"
-    sudo chmod -R 755 "$PROJECT_DIR/dist"
+            location / {
+                root $PROJECT_DIR/dist;
+                index index.html;
+                try_files \$uri \$uri/ /index.html;
+            }
+        }" | sudo tee "$NGINX_CONF"
+        ;;
+    
+    4)
+        # Vue app
+        echo "Setting up Vue app..."
+        # Install Node.js and npm
+        sudo $INSTALL_COMMAND nodejs npm
 
-    # Create Nginx configuration for Angular
-    echo "server {
-        listen 80;
+        # Install Vue CLI
+        sudo npm install -g @vue/cli
 
-        location / {
-            root $PROJECT_DIR/dist;
-            index index.html;
-            try_files \$uri \$uri/ /index.html;
-        }
-    }" | sudo tee "$NGINX_CONF"
+        # Install dependencies and build the Vue app
+        npm install
+        npm run build
 
-elif [ "$APP_TYPE" -eq 4 ]; then
-    # Vue app
-    echo "Setting up Vue app..."
-    # Install Node.js and npm
-    sudo $INSTALL_COMMAND nodejs npm
+        # Set permissions for the dist folder
+        sudo chown -R root:root "$PROJECT_DIR/dist"
+        sudo chmod -R 755 "$PROJECT_DIR/dist"
 
-    # Install Vue CLI
-    sudo npm install -g @vue/cli
+        # Create Nginx configuration for Vue
+        echo "server {
+            listen 80;
 
-    # Install dependencies and build the Vue app
-    npm install
-    npm run build
-
-    # Set permissions for the dist folder
-    sudo chown -R root:root "$PROJECT_DIR/dist"
-    sudo chmod -R 755 "$PROJECT_DIR/dist"
-
-    # Create Nginx configuration for Vue
-    echo "server {
-        listen 80;
-
-        location / {
-            root $PROJECT_DIR/dist;
-            index index.html;
-            try_files \$uri \$uri/ /index.html;
-        }
-    }" | sudo tee "$NGINX_CONF"
-
-else
-    echo "Invalid selection. Exiting."
-    exit 1
-fi
+            location / {
+                root $PROJECT_DIR/dist;
+                index index.html;
+                try_files \$uri \$uri/ /index.html;
+            }
+        }" | sudo tee "$NGINX_CONF"
+        ;;
+    
+    *)
+        echo "Invalid application type selected. Exiting."
+        exit 1
+        ;;
+esac
 
 # Create the symbolic link for sites-enabled
 if [ ! -L "/etc/nginx/sites-enabled/project" ]; then
